@@ -4,7 +4,7 @@ ZSH_THEME="fwalch"
 
 plugins=(git)
 
-source $ZSH/oh-my-zsh.sh
+source $ZSH/.oh-my-zsh.sh
 
 # Directories
 export REPOS="$HOME/repositories"
