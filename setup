@@ -1,0 +1,41 @@
+#!/bin/bash
+
+DOTFILE_DIR="$HOME/dotfile"
+XDG_CONFIG_HOME="$HOME/.config"
+
+create_directories() {
+  local directories=("$@")
+  for dir in "${directories[@]}"; do
+    mkdir -p "$dir"
+  done
+}
+
+create_symlinks() {
+  local items=("$@")
+  for item in "${items[@]}"; do
+    IFS=':' read -r source target <<<"$item"
+    if [ -L "$target" ]; then
+      echo "Removing existing symlink $target"
+      unlink "$target"
+    elif [ -d "$target" ] && [ ! -h "$target" ]; then
+      echo "Warning: $target is a directory and not a symlink. Skipping..."
+      continue
+    elif [ -e "$target" ]; then
+      echo "Warning: $target already exists. Skipping..."
+      continue
+    fi
+    ln -s "$source" "$target"
+    echo "Created symlink for $source to $target"
+  done
+}
+
+common_directories=()
+
+common_items=(
+  "$DOTFILE_DIR/.zshrc:$HOME/.zshrc"
+  "$DOTFILE_DIR/.oh-my-zsh:$HOME/.oh-my-zsh"
+)
+
+# Then, create directories and symlinks
+create_directories "${common_directories[@]}"
+create_symlinks "${common_items[@]}"
