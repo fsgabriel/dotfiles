@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOTFILE_DIR="$HOME/dotfile"
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 XDG_CONFIG_HOME="$HOME/.config"
 
 create_directories() {
@@ -32,8 +32,8 @@ create_symlinks() {
 common_directories=()
 
 common_items=(
-  "$DOTFILE_DIR/.zshrc:$HOME/.zshrc"
-  "$DOTFILE_DIR/.oh-my-zsh:$HOME/.oh-my-zsh"
+  "$DOTFILES_DIR/.zshrc:$HOME/.zshrc"
+  "$DOTFILES_DIR/.oh-my-zsh:$HOME/.oh-my-zsh"
 )
 
 # Then, create directories and symlinks
