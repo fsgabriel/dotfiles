@@ -6,7 +6,7 @@ XDG_CONFIG_HOME="$HOME/.config"
 create_directories() {
   local directories=("$@")
   for dir in "${directories[@]}"; do
-    mkdir -p "$dir"
+    mkdir -p "$dir" || { echo "ERROR: Failed to create directory $dir"; exit 1; }
   done
 }
 
@@ -14,28 +14,72 @@ create_symlinks() {
   local items=("$@")
   for item in "${items[@]}"; do
     IFS=':' read -r source target <<<"$item"
+
+    # Check if source exists
+    if [ ! -e "$source" ]; then
+      echo "ERROR: Source file $source does not exist. Skipping..."
+      continue
+    fi
+
+    # Handle existing target
     if [ -L "$target" ]; then
       echo "Removing existing symlink $target"
       unlink "$target"
-    elif [ -d "$target" ] && [ ! -h "$target" ]; then
-      echo "Warning: $target is a directory and not a symlink. Skipping..."
-      continue
     elif [ -e "$target" ]; then
-      echo "Warning: $target already exists. Skipping..."
-      continue
+      echo "WARNING: $target already exists and is not a symlink. Backing up..."
+      mv "$target" "${target}.bak_$(date +%s)"
     fi
+
     ln -s "$source" "$target"
     echo "Created symlink for $source to $target"
   done
 }
 
+install_zsh() {
+  if ! command -v zsh >/dev/null 2>&1; then
+    echo "Zsh not found, installing..."
+    if [[ "$(uname)" == "Darwin" ]]; then
+      brew install zsh
+    elif [[ "$(uname)" == "Linux" ]]; then
+      if [ -f /etc/debian_version ]; then
+        sudo apt update && sudo apt install -y zsh
+      elif [ -f /etc/redhat-release ]; then
+        sudo yum install -y zsh
+      fi
+    fi
+  else
+    echo "Zsh is already installed."
+  fi
+}
+
+install_oh_my_zsh() {
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "Installing Oh My Zsh..."
+    RUNZSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  else
+    echo "Oh My Zsh is already installed."
+  fi
+}
+
+# Install Zsh and Oh My Zsh
+install_zsh
+install_oh_my_zsh
+
+# Define directories and symlinks for configuration
 common_directories=()
 
 common_items=(
   "$DOTFILES_DIR/.zshrc:$HOME/.zshrc"
-  "$DOTFILES_DIR/.oh-my-zsh:$HOME/.oh-my-zsh"
 )
 
-# Then, create directories and symlinks
+# Create directories and symlinks
 create_directories "${common_directories[@]}"
 create_symlinks "${common_items[@]}"
+
+# Change default shell to zsh if it’s not already set
+if [ "$SHELL" != "$(which zsh)" ]; then
+  echo "Changing default shell to Zsh..."
+  chsh -s "$(which zsh)"
+fi
+
+echo "Setup complete. Please restart your terminal."

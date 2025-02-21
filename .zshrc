@@ -4,13 +4,13 @@ ZSH_THEME="fwalch"
 
 plugins=(git)
 
-source $ZSH/.oh-my-zsh.sh
+source $ZSH/oh-my-zsh.sh
 
 # Directories
 export REPOS="$HOME/repositories"
 export GITUSER="fsgabriel"
 export GHREPOS="$REPOS/$GITUSER"
-export DOTFILES="$GHREPOS/dotfiles"
+export DOTFILES="$REPOS/dotfiles"
 export SCRIPTS="$DOTFILES/scripts"
 
 # Go related
@@ -47,6 +47,12 @@ alias cl='clear'
     cd ..
 }
 
+# Directories
+alias scripts='cd $SCRIPTS'
+alias repos='cd $REPOS'
+alias ghrepos='cd $GHREPOS'
+alias dotfiles='cd $DOTFILES'
+
 # Docker
 alias dco="docker-compose"
 alias dcup="docker-compose up -d"
@@ -57,6 +63,7 @@ alias dl="docker ps -l -q"
 alias dx="docker exec -it"
 
 # Git
+alias gclone='function _gclone() { mkdir -p "$HOME/repositories" && cd "$HOME/repositories" && git clone "$1"; }; _gclone'
 alias gc='git commit -m'
 alias gps='git push'
 alias gp='git pull origin'
@@ -75,13 +82,16 @@ alias goruntst='bash ~/scripts/gotest.sh'
 alias maincache='docker exec -it test-cache redis-cli -a 5AJwf62jXo0v'
 
 
-# ~~~~~~~~~~~~~~~ Nvm ~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~ Load ~~~~~~~~~~~~~~~~~~~~~~~~
+# Scripts
+if [ -d "$SCRIPTS" ]; then
+  chmod +x "$SCRIPTS"/*
+fi
 
+# Nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
 
 # ~~~~~~~~~~~~~~~ Functions ~~~~~~~~~~~~~~~~~~~~~~
 cd() {

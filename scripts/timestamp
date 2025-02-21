@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Get the current timestamp in epoch format
+epoch_timestamp=$(date +%s)
+
+# Copy the epoch timestamp to the clipboard using pbcopy
+echo -n "$epoch_timestamp" | pbcopy
