@@ -102,17 +102,3 @@ cd() {
 }
 
 cd .
-
-# ~~~~~~~~~~~~~~~ Meli ~~~~~~~~~~~~~~~~~~~~~~~~
-export RANGER_FURY_LOCATION=/Users/gaperassi/.fury #Added by Fury CLI
-export RANGER_FURY_VENV_LOCATION=/Users/gaperassi/.fury/fury_venv #Added by Fury CLI
-
-# Added by Fury CLI installation process
-declare FURY_BIN_LOCATION="/Users/gaperassi/.fury/fury_venv/bin" # Added by Fury CLI installation process
-export PATH="$PATH:$FURY_BIN_LOCATION" # Added by Fury CLI installation process
-
-
-export GOPRIVATE=$GOPRIVATE:github.com/mercadolibre/*,github.com/melisource/*
-export GONOSUMDB=github.com/mercadolibre/*,github.com/melisource/*
-export GOPROXY=https://go.artifacts.furycloud.io/
-export GONOPROXY=https://go.artifacts.furycloud.io/
